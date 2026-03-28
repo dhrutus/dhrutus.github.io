@@ -776,7 +776,7 @@
 
       <div class="hero-badge">
         <span class="badge-dot"></span>
-        Casually looking for oppurtinities
+        Casually looking for opportunities
       </div>
 
       <h1 class="hero-title">
@@ -786,7 +786,7 @@
       <p class="hero-role">Minimalist Developer &nbsp;·&nbsp; Open Source Enthusiast &nbsp;·&nbsp; UI Designer</p>
 
       <p class="hero-description">
-        I craft exceptional digital experiences where elegant code meets beautiful design.
+        I craft digital experiences where elegant code meets beautiful design.
         Passionate about building products that are both technically sound and aesthetically refined.
       </p>
 
@@ -799,21 +799,21 @@
 
     <!-- ── STATS ───────────────────────────────────── -->
     <div class="reveal">
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-number" data-target="8">0</div>
-          <div class="stat-label">Projects Built</div>
-        </div>
-        <div class="stat">
-          <div class="stat-number" data-target="1">0</div>
-          <div class="stat-label">Years Experience</div>
-        </div>
-        <div class="stat">
-          <div class="stat-number" data-target="5">0</div>
-          <div class="stat-label">GitHub Stars</div>
-        </div>
-      </div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-number" id="projects-count" data-target="0">0</div>
+      <div class="stat-label">Projects Built</div>
     </div>
+    <div class="stat">
+      <div class="stat-number" id="experience-years" data-target="0">0</div>
+      <div class="stat-label">Years of Experience</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number" id="github-stars" data-target="0">0</div>
+      <div class="stat-label">GitHub Stars</div>
+    </div>
+  </div>
+</div>
 
     <!-- ── SKILLS ──────────────────────────────────── -->
     <section id="skills">
@@ -824,17 +824,6 @@
       </div>
 
       <div class="skills-grid">
-
-        <div class="skill-card reveal">
-          <div class="skill-icon">⚡</div>
-          <div class="skill-title">Frontend Engineering</div>
-          <div class="skill-desc">Building blazing-fast, pixel-perfect interfaces with modern frameworks and an obsession for performance.</div>
-          <div class="skill-tags">
-            <span class="tag">React</span>
-            <span class="tag">Next.js</span>
-            <span class="tag">Tailwind</span>
-          </div>
-        </div>
 
         <div class="skill-card reveal">
           <div class="skill-icon">🛠️</div>
@@ -974,7 +963,7 @@
 
         <div class="timeline-item reveal">
           <div class="timeline-date">2025 - Present</div>
-          <div class="timeline-role">Developer L1</div>
+          <div class="timeline-role">Project Engineer</div>
           <div class="timeline-company">Wipro Limited - Bengaluru, KA</div>
           <div class="timeline-desc">
             Presently working for Ford Motors Company under Automation domain.
@@ -1102,6 +1091,48 @@
 
     document.querySelectorAll('.stats').forEach(el => counterObserver.observe(el));
 
+    async function updateStats() {
+    const username = 'dhrutus'; // <--- Change this!
+    const startDate = new Date('2025-03-01');
+    const today = new Date();
+
+    // 1. Calculate Years of Experience
+    // This calculates the difference in years with one decimal point (e.g., 1.2)
+    const diffInMs = today - startDate;
+    const yearsExp = (diffInMs / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1);
+    
+    const expElement = document.getElementById('experience-years');
+    expElement.innerText = yearsExp;
+    expElement.setAttribute('data-target', yearsExp);
+
+    try {
+      // 2. Fetch GitHub Data
+      // We fetch all public repos (up to 100)
+      const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`);
+      const repos = await response.json();
+
+      if (Array.isArray(repos)) {
+        // Calculate total stars across all repositories
+        const totalStars = repos.reduce((acc, repo) => acc + repo.stargazers_count, 0);
+        const projectCount = repos.length;
+
+        // Update Projects Count
+        const projectElement = document.getElementById('projects-count');
+        projectElement.innerText = projectCount;
+        projectElement.setAttribute('data-target', projectCount);
+
+        // Update Stars Count
+        const starsElement = document.getElementById('github-stars');
+        starsElement.innerText = totalStars;
+        starsElement.setAttribute('data-target', totalStars);
+      }
+    } catch (error) {
+      console.error("Error fetching GitHub stats:", error);
+    }
+  }
+
+  // Run the function when the page loads
+  window.addEventListener('DOMContentLoaded', updateStats);
   </script>
 </body>
 </html>
